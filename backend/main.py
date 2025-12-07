@@ -2,6 +2,8 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
 from supabase import create_client, Client
+from pydantic import BaseModel
+from services.explainer import generate_explanation
 
 # 1. Load the secrets from .env
 load_dotenv()
@@ -39,6 +41,25 @@ def test_db():
         return {"db_status": "connected", "data": response.data}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# --- NEW: AI Endpoint ---
+
+class ExplainRequest(BaseModel):
+    text: str
+    interests: list = ["general"]
+    book_type: str = "general"
+
+@app.post("/api/explain")
+def explain_text(request: ExplainRequest):
+    print(f"🧠 Generating explanation for: {request.book_type}")
+    
+    result = generate_explanation(
+        content=request.text,
+        interests=request.interests,
+        book_type=request.book_type
+    )
+    
+    return result
 
 if __name__ == "__main__":
     import uvicorn
