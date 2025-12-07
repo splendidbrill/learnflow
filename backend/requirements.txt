@@ -4,7 +4,7 @@ python-dotenv
 openai
 python-multipart
 pydantic
-# Force correct versions for Supabase to prevent conflicts
 supabase>=2.25.0
 websockets>=13.0
 httpx==0.27.2
+pypdf  
